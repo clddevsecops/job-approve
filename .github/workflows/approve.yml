@@ -1,41 +1,25 @@
-name: Two Jobs with Approval
+name: 'Deploy ASP.NET Core app to Azure Web App'
 
 on:
   push:
     branches:
-      - main
+      - "main"
 
 jobs:
-  job1:
+  deploy-dev:
     runs-on: ubuntu-latest
+    environment: dev
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      # Checkout the repo
+      - uses: actions/checkout@v2
 
-      - name: Run Job 1
-        run: echo "Job 1 is running"
-
-  job2:
-    needs: job1
+  deploy-prod:
     runs-on: ubuntu-latest
+    environment: 'prod'
+    needs: deploy-dev
     steps:
-      - name: Await approval
-        id: approval
-        run: |
-          echo "Please approve this job to continue."
-          echo "Awaiting approval..."
-          while :; do
-            if [ -f .approval ]; then
-              echo "Approval granted."
-              break
-            fi
-            sleep 5
-          done
-
-      - name: Checkout code
-        if: always()
-        uses: actions/checkout@v2
-
-      - name: Run Job 2
-        if: always()
-        run: echo "Job 2 is running"
+      # Download published artifact
+      - name: Download artifact
+        run: echo "approved"
+        
+   
